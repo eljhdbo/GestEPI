@@ -1,4 +1,5 @@
 const db = require('../models/db');
+
 // Récupérer tous les EPI
 exports.getAllEpi = (req, res) => {
   db.query('SELECT * FROM epi', (err, results) => {
@@ -115,7 +116,7 @@ exports.deleteEpi = (req, res) => {
   });
 };
 
-// Ajoute ce contrôleur à la fin du fichier epiController.js
+// Contrôles à venir
 exports.getUpcomingControles = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -124,13 +125,13 @@ exports.getUpcomingControles = async (req, res) => {
        JOIN epi e ON c.epi_id = e.id
        WHERE DATE(c.date_controle) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
        ORDER BY c.date_controle ASC`
-    )
-    res.json(rows)
+    );
+    res.json(rows);
   } catch (err) {
-    console.error('❌ Erreur SQL dans getUpcomingControles :', err.message)
-    res.status(500).json({ error: 'Erreur serveur' })
+    console.error('❌ Erreur SQL dans getUpcomingControles :', err.message);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
-}
+};
 
 // Simulation d'envoi automatique d'une notification pour les contrôles à venir
 exports.sendControleAlerts = async (req, res) => {
@@ -140,16 +141,15 @@ exports.sendControleAlerts = async (req, res) => {
       FROM controle c
       JOIN epi e ON c.epi_id = e.id
       WHERE DATE(c.date_controle) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
-    `)
+    `);
 
-    // Simulation d'envoi d'alerte (console + réponse JSON)
     rows.forEach(controle => {
-      console.log(`📧 Alerte : Contrôle à venir le ${controle.date_controle} pour EPI ${controle.identifiant_custom} (${controle.marque} ${controle.modele})`)
-    })
+      console.log(`📧 Alerte : Contrôle à venir le ${controle.date_controle} pour EPI ${controle.identifiant_custom} (${controle.marque} ${controle.modele})`);
+    });
 
-    res.json({ message: `${rows.length} alertes simulées pour envoi automatique`, controles: rows })
+    res.json({ message: `${rows.length} alertes simulées pour envoi automatique`, controles: rows });
   } catch (err) {
-    console.error('❌ Erreur simulation alerte automatique :', err)
-    res.status(500).json({ error: 'Erreur serveur' })
+    console.error('❌ Erreur simulation alerte automatique :', err);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
-}
+};

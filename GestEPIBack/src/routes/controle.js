@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const controleController = require('../controllers/controleController');
 
-// Récupérer tous les contrôles
-router.get('/', controleController.getAllControles);
-
-// Ajouter un nouveau contrôle
+// ➕ Ajouter un nouveau contrôle
 router.post('/', controleController.addControle);
 
-// Supprimer un contrôle
+// 📄 Récupérer tous les contrôles
+router.get('/', controleController.getAllControles);
+
+// ❌ Supprimer un contrôle
 router.delete('/:id', controleController.deleteControle);
+
+// 🚨 Simuler l’envoi automatique d’alertes
+router.get('/send-alerts', controleController.sendControleAlerts);
 
 module.exports = router;

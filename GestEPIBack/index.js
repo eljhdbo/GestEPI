@@ -2,16 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+// Middleware JSON & CORS
 app.use(express.json());
 app.use(cors());
 
-// Importation de routes
+// Import des routes
 const epiRoutes = require('./src/routes/epi');
+const controleRoutes = require('./src/routes/controle');
 
-// Utilisation sous le bon préfixe
-app.use('/api', epiRoutes);
+// Routes principales
+app.use('/api/epi', epiRoutes);
+app.use('/api/controles', controleRoutes);
 
-const PORT = 3002;
+// Démarrage du serveur
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
+  console.log(`✅ Serveur backend démarré sur le port ${PORT}`);
 });
