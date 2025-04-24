@@ -1,122 +1,118 @@
 const db = require('../models/db');
 
-// Récupérer tous les EPI
-exports.getAllEpi = (req, res) => {
-  db.query('SELECT * FROM epi', (err, results) => {
-    if (err) {
-      res.status(500).send('Erreur lors de la récupération des EPI');
-      return;
-    }
-    res.json(results);
-  });
+// ✅ Récupérer tous les EPI
+exports.getAllEpi = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM epi');
+    res.json(rows);
+  } catch (err) {
+    console.error("❌ Erreur SQL dans getAllEpi :", err.message);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 };
 
-// Ajouter un nouvel EPI
-exports.addEpi = (req, res) => {
-  const {
-    identifiant_custom,
-    marque,
-    modele,
-    numero_serie,
-    taille,
-    couleur,
-    type_epi,
-    periodicite_controle,
-    date_achat,
-    date_fabrication,
-    date_mise_service
-  } = req.body;
+// ✅ Ajouter un nouvel EPI
+exports.addEpi = async (req, res) => {
+  try {
+    const {
+      identifiant_custom,
+      marque,
+      modele,
+      numero_serie,
+      taille,
+      couleur,
+      type_epi,
+      periodicite_controle,
+      date_achat,
+      date_fabrication,
+      date_mise_service
+    } = req.body;
 
-  const sql = `
-    INSERT INTO epi 
-    (identifiant_custom, marque, modele, numero_serie, taille, couleur, type_epi, periodicite_controle, date_achat, date_fabrication, date_mise_service)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+    const sql = `
+      INSERT INTO epi 
+      (identifiant_custom, marque, modele, numero_serie, taille, couleur, type_epi, periodicite_controle, date_achat, date_fabrication, date_mise_service)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-  const values = [
-    identifiant_custom,
-    marque,
-    modele,
-    numero_serie,
-    taille,
-    couleur,
-    type_epi,
-    periodicite_controle,
-    date_achat,
-    date_fabrication,
-    date_mise_service
-  ];
+    const values = [
+      identifiant_custom,
+      marque,
+      modele,
+      numero_serie,
+      taille,
+      couleur,
+      type_epi,
+      periodicite_controle,
+      date_achat,
+      date_fabrication,
+      date_mise_service
+    ];
 
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Erreur lors de l’ajout de l’EPI");
-      return;
-    }
+    const [result] = await db.query(sql, values);
     res.status(201).json({ message: "EPI ajouté avec succès", id: result.insertId });
-  });
+  } catch (err) {
+    console.error("❌ Erreur SQL dans addEpi :", err.message);
+    res.status(500).json({ error: "Erreur lors de l’ajout de l’EPI" });
+  }
 };
 
-// Mettre à jour un EPI existant
-exports.updateEpi = (req, res) => {
-  const { id } = req.params;
-  const {
-    marque,
-    modele,
-    taille,
-    couleur,
-    type_epi,
-    periodicite_controle,
-    date_achat,
-    date_fabrication,
-    date_mise_service
-  } = req.body;
+// ✅ Mettre à jour un EPI existant
+exports.updateEpi = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      marque,
+      modele,
+      taille,
+      couleur,
+      type_epi,
+      periodicite_controle,
+      date_achat,
+      date_fabrication,
+      date_mise_service
+    } = req.body;
 
-  const sql = `
-    UPDATE epi 
-    SET marque = ?, modele = ?, taille = ?, couleur = ?, type_epi = ?, periodicite_controle = ?, date_achat = ?, date_fabrication = ?, date_mise_service = ?
-    WHERE id = ?
-  `;
+    const sql = `
+      UPDATE epi 
+      SET marque = ?, modele = ?, taille = ?, couleur = ?, type_epi = ?, periodicite_controle = ?, date_achat = ?, date_fabrication = ?, date_mise_service = ?
+      WHERE id = ?
+    `;
 
-  const values = [
-    marque,
-    modele,
-    taille,
-    couleur,
-    type_epi,
-    periodicite_controle,
-    date_achat,
-    date_fabrication,
-    date_mise_service,
-    id
-  ];
+    const values = [
+      marque,
+      modele,
+      taille,
+      couleur,
+      type_epi,
+      periodicite_controle,
+      date_achat,
+      date_fabrication,
+      date_mise_service,
+      id
+    ];
 
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Erreur lors de la mise à jour de l’EPI");
-      return;
-    }
+    await db.query(sql, values);
     res.json({ message: "EPI mis à jour avec succès" });
-  });
+  } catch (err) {
+    console.error("❌ Erreur SQL dans updateEpi :", err.message);
+    res.status(500).json({ error: "Erreur lors de la mise à jour de l’EPI" });
+  }
 };
 
-// Supprimer un EPI
-exports.deleteEpi = (req, res) => {
-  const { id } = req.params;
-  const sql = 'DELETE FROM epi WHERE id = ?';
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Erreur lors de la suppression de l’EPI");
-      return;
-    }
+// ✅ Supprimer un EPI
+exports.deleteEpi = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = 'DELETE FROM epi WHERE id = ?';
+    await db.query(sql, [id]);
     res.json({ message: "EPI supprimé avec succès" });
-  });
+  } catch (err) {
+    console.error("❌ Erreur SQL dans deleteEpi :", err.message);
+    res.status(500).json({ error: "Erreur lors de la suppression de l’EPI" });
+  }
 };
 
-// Contrôles à venir
+// ✅ Contrôles à venir
 exports.getUpcomingControles = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -133,7 +129,7 @@ exports.getUpcomingControles = async (req, res) => {
   }
 };
 
-// Simulation d'envoi automatique d'une notification pour les contrôles à venir
+// ✅ Simulation d'envoi automatique d'une notification pour les contrôles à venir
 exports.sendControleAlerts = async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -149,7 +145,7 @@ exports.sendControleAlerts = async (req, res) => {
 
     res.json({ message: `${rows.length} alertes simulées pour envoi automatique`, controles: rows });
   } catch (err) {
-    console.error('❌ Erreur simulation alerte automatique :', err);
+    console.error('❌ Erreur simulation alerte automatique :', err.message);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };

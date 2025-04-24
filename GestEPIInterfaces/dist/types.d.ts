@@ -37,8 +37,11 @@ export interface Controle {
     commentaire: string;
     controleur: string;
 }
-export interface ControleWithEpi extends Controle {
+export interface EpiMini {
     identifiant_custom: string;
     marque: string;
     modele: string;
+}
+export interface ControleWithEpi extends Controle {
+    epi?: EpiMini;
 }

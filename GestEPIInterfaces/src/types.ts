@@ -47,9 +47,14 @@ export interface Controle {
   controleur: string;
 }
 
-// Interface enrichie pour la table avec données EPI
-export interface ControleWithEpi extends Controle {
+// Mini interface EPI pour affichage dans les contrôles
+export interface EpiMini {
   identifiant_custom: string;
   marque: string;
   modele: string;
+}
+
+// Interface enrichie avec les infos EPI (pour frontend)
+export interface ControleWithEpi extends Controle {
+  epi?: EpiMini;
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserType = void 0;
-// Enumération des types d'utilisateur
+// Enumération des types d'utilisateur 
 var UserType;
 (function (UserType) {
     UserType[UserType["ADMIN"] = 1] = "ADMIN";
